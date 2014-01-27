@@ -7,6 +7,7 @@ namespace BreakoutWindows.Entities
 {
 	public class Entity
 	{
+		// IMPLEMENT FLOAT RECTANGLE
 		public Rectangle boundingBox;
 		protected Texture2D texture;
 		public Vector2 speed;
@@ -60,6 +61,8 @@ namespace BreakoutWindows.Entities
 		{
 			speed.X += acceleration.X * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000;
 			speed.Y += acceleration.Y * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000;
+
+			boundingBox.
 
 			boundingBox.X += (int)(speed.X * gameTime.ElapsedGameTime.TotalMilliseconds / 1000);
 			boundingBox.Y += (int)(speed.Y * gameTime.ElapsedGameTime.TotalMilliseconds / 1000);

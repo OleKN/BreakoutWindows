@@ -41,6 +41,7 @@
     <Compile Include="Entities\Paddle.cs" />
     <Compile Include="Entities\Powerup.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="HelperClasses\RectangleFloat.cs" />
     <Compile Include="Particle.cs" />
     <Compile Include="POWERUPS.cs" />
     <Compile Include="Program.cs" />
