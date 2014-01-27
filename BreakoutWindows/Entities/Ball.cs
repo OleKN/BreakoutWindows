@@ -2,22 +2,24 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using BreakoutWindows.HelperClasses;
 
 namespace BreakoutWindows.Entities
 {
 	public class Ball : Entity
 	{
-		private Rectangle initialRect;
+		private RectangleFloat initialRect;
 		private Vector2 initialSpeed;
-		public int damage = 1;
+		public static int damage = 1;
+		public int penetrationCounter = 0;
 
 		#region Constructors
-		public Ball(Rectangle box, Texture2D tex)
+		public Ball(RectangleFloat box, Texture2D tex)
 			: base(box, tex)
 		{
 			this.initialRect = box;
 		}
-		public Ball(Rectangle box, Texture2D tex, Vector2 speed)
+		public Ball(RectangleFloat box, Texture2D tex, Vector2 speed)
 			: base(box, tex, speed)
 		{
 			this.initialRect = box;
@@ -27,33 +29,82 @@ namespace BreakoutWindows.Entities
 
 		public override void update(GameTime gameTime)
 		{
-			base.update(gameTime);
-
-			handleWallCollision();
-
-			if (collidesWith(GameObjects.paddle)){
-				handlePaddleCollison(GameObjects.paddle);
-			}
-
-			foreach (Brick brick in GameObjects.bricks)
+			if (GameObjects.paddle.stickyBall != this)
 			{
-				if (collidesWith(brick))
-					if (handleBrickCollision(brick)) {
-						//CARRY ON IF PENETRATION IS ACTIVE
-					}
-			}
+				base.update(gameTime);
 
+				handleWallCollision();
 
-			for (int i = GameObjects.balls.IndexOf(this) + 1; i < GameObjects.balls.Count; i++)
-			{
-				if (radiallyCollidesWith(GameObjects.balls[i]))
+				if (collidesWith(GameObjects.paddle))
 				{
-					handleBallCollision(GameObjects.balls[i]);
+					handlePaddleCollison(GameObjects.paddle);
 				}
+
+				foreach (Brick brick in GameObjects.bricks)
+				{
+					if (collidesWith(brick)) {
+						bool destroyed = brick.Damage(damage);
+
+						if (POWERUPS.explosive)
+						{
+							Effects.explode(this, 3);
+							handleBrickCollision(brick);
+
+							foreach (Brick b in GameObjects.bricks)
+							{
+								Vector2 dist = b.Center - brick.Center;
+								if (dist.Length() < Width * 4)
+								{
+									b.Damage(3, false);
+								}
+							}
+							
+						}
+						else if(!destroyed || penetrationCounter <= 0)
+						{
+							handleBrickCollision(brick);
+						}
+						else if (penetrationCounter > 0)
+						{
+							penetrationCounter--;
+						}
+					}
+				}
+
+				/*
+				for (int i = GameObjects.balls.IndexOf(this) + 1; i < GameObjects.balls.Count; i++)
+				{
+					if (radiallyCollidesWith(GameObjects.balls[i]))
+					{
+						handleBallCollision(GameObjects.balls[i]);
+					}
+				}*/
 			}
+		}
 
+		public override void draw(GameTime gameTime, SpriteBatch spriteBatch)
+		{
 
-
+			if (GameObjects.paddle.stickyBall == this)
+			{
+				spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Green);
+			}
+			/*else if (penetrationCounter > 0 && POWERUPS.explosive)
+			{
+				spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Yellow);
+			}*/
+			else if (POWERUPS.explosive)
+			{
+				spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Red);
+			}
+			else if (penetrationCounter > 0)
+			{
+				spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Orange);
+			}
+			else
+			{
+				spriteBatch.Draw(texture, boundingBox.Rectangle, Color.White);
+			}
 		}
 
 		public bool radiallyCollidesWith(Ball other)
@@ -99,10 +150,8 @@ namespace BreakoutWindows.Entities
 			}
 		}
 
-		private bool handleBrickCollision(Brick brick)
+		private void handleBrickCollision(Brick brick)
 		{
-			bool destroyed = brick.Damage(damage);
-
 			if (boundingBox.Left < brick.boundingBox.Left && speed.X > 0 ||
 				boundingBox.Right > brick.boundingBox.Right && speed.X < 0)
 			{
@@ -113,7 +162,6 @@ namespace BreakoutWindows.Entities
 			{
 				speed.Y = -speed.Y;
 			}
-			return destroyed;
 		}
 
 		private void handleBallCollision(Ball ball)
@@ -135,6 +183,10 @@ namespace BreakoutWindows.Entities
 
 		private void handlePaddleCollison(Paddle paddle)
 		{
+			if (POWERUPS.sticky && paddle.stickyBall == null)
+			{
+				GameObjects.paddle.stick(this);
+			}
 			Vector2 distance = new Vector2(Center.X - paddle.Center.X, Center.Y - paddle.Center.Y - paddle.Width / 4);
 			float length = distance.Length();
 			distance.X = distance.X / length * speed.Length();

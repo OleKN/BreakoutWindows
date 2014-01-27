@@ -6,10 +6,10 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BreakoutWindows.HelperClasses
 
 {
-	class RectangleFloat
+	public class RectangleFloat
 	{
-		Vector2 position;
-		Vector2 size;
+		public Vector2 position;
+		public Vector2 size;
 
 		#region Constructors
 		public RectangleFloat(float x, float y, float w, float h)
@@ -44,7 +44,7 @@ namespace BreakoutWindows.HelperClasses
 			set { size.X = value; }
 		}
 
-		public float Heigth
+		public float Height
 		{
 			get { return size.Y; }
 			set { size.Y = value; }
@@ -67,11 +67,16 @@ namespace BreakoutWindows.HelperClasses
 
 		public float Bottom
 		{
-			get { return Y + Heigth; }
+			get { return Y + Height; }
+		}
+
+		public Rectangle Rectangle
+		{
+			get { return new Rectangle((int)X, (int)Y, (int)Width, (int)Height); }
 		}
 		#endregion
 
-		public bool intersectsWith(RectangleFloat rect)
+		public bool Intersects(RectangleFloat rect)
 		{
 			bool cond1 = rect.Left > this.Right;
 			bool cond2 = rect.Right < this.Left;

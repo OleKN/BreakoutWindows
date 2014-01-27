@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using BreakoutWindows.HelperClasses;
 
 namespace BreakoutWindows.Entities
 {
@@ -9,10 +10,10 @@ namespace BreakoutWindows.Entities
 	{
 		private enum TYPE {EXTRA_BALL, PAD_SIZE, STICKY, EXPLOSIVE, POWER_BALL};
 		public int type = 0;
-		public Powerup(Rectangle box, Texture2D tex)
+		public Powerup(RectangleFloat box, Texture2D tex)
 			: base(box, tex, new Vector2(0,200))
 		{
-			Random random = new Random(box.X * box.Y);
+			Random random = new Random((int)(box.X * box.Y));
 			this.type = random.Next(0,5);
 		}
 
@@ -26,7 +27,7 @@ namespace BreakoutWindows.Entities
 				switch (type)
 				{
 					case (int) TYPE.EXTRA_BALL:
-						GameObjects.balls.Add(new Ball(new Rectangle(GameObjects.paddle.boundingBox.X + GameObjects.paddle.boundingBox.Width / 2 - 5,
+						GameObjects.balls.Add(new Ball(new RectangleFloat(GameObjects.paddle.boundingBox.X + GameObjects.paddle.boundingBox.Width / 2 - 5,
 									GameObjects.paddle.boundingBox.Top - 10,
 									20,
 									20),
@@ -57,22 +58,22 @@ namespace BreakoutWindows.Entities
 			switch (type)
 			{
 				case (int)TYPE.EXTRA_BALL:
-					spriteBatch.Draw(texture, boundingBox, Color.Blue);
+					spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Blue);
 					break;
 				case (int)TYPE.PAD_SIZE:
-					spriteBatch.Draw(texture, boundingBox, Color.Yellow);
+					spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Yellow);
 					break;
 				case (int)TYPE.STICKY:
-					spriteBatch.Draw(texture, boundingBox, Color.Green);
+					spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Green);
 					break;
 				case (int)TYPE.POWER_BALL:
-					spriteBatch.Draw(texture, boundingBox, Color.Orange);
+					spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Orange);
 					break;
 				case (int)TYPE.EXPLOSIVE:
-					spriteBatch.Draw(texture, boundingBox, Color.Red);
+					spriteBatch.Draw(texture, boundingBox.Rectangle, Color.Red);
 					break;
 				default:
-					spriteBatch.Draw(texture, boundingBox, Color.Red);
+					spriteBatch.Draw(texture, boundingBox.Rectangle, Color.White);
 					break;
 			}
 		}

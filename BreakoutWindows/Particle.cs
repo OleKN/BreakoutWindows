@@ -3,26 +3,31 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using BreakoutWindows.Entities;
+using BreakoutWindows.HelperClasses;
 
 namespace BreakoutWindows
 {
 	public class Particle : Entity
 	{
 		private double lifeTime;
+		private double startingLifeTime;
+		//private static Vector2 defaultSize = new Vector2(3, 3);
 
 		#region Constructors
 		public Particle(Vector2 pos, double lt)
-			: base(new Rectangle((int)pos.X, (int)pos.Y, 1, 1), new Texture2D(GameObjects.graphicsDevice, 1, 1))
+			: base(new RectangleFloat((int)pos.X, (int)pos.Y, 1, 1), GameObjects.textureFireParticle)
 		{
 			this.lifeTime = lt;
+			this.startingLifeTime = lt;
 			acceleration = new Vector2(0, 80);
 		}
-		public Particle(Vector2 pos, double lt, Vector2 speed)
-			: base(new Rectangle((int)pos.X, (int)pos.Y, 3, 3), GameObjects.textureBall/*new Texture2D(GameObjects.graphicsDevice, 1, 1)*/)
+		public Particle(Vector2 pos, double lt, Vector2 speed, Vector2 size)
+			: base(new RectangleFloat((int)pos.X - size.X / 2, (int)pos.Y - size.Y / 2, size.X, size.Y), GameObjects.textureFireParticle/*new Texture2D(GameObjects.graphicsDevice, 1, 1)*/)
 		{
 			this.lifeTime = lt;
 			this.speed = speed;
-			acceleration = new Vector2(0, 80);
+			this.startingLifeTime = lt;
+			acceleration = new Vector2(0, 30);
 			//Console.WriteLine("CREATED PARTICLE" + speed.X);
 		}
 
@@ -42,5 +47,11 @@ namespace BreakoutWindows
 				GameObjects.destroyed.Add(this);
 			}
 		}
+
+		public override void draw(GameTime gameTime, SpriteBatch spriteBatch)
+		{
+			spriteBatch.Draw(texture, boundingBox.Rectangle, new Color(255, (int)(255 * (startingLifeTime - lifeTime) / startingLifeTime), 0));
+		}
+
 	}
 }

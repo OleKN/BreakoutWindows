@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using BreakoutWindows.HelperClasses;
 
 namespace BreakoutWindows.Entities
 {
 	public class Entity
 	{
 		// IMPLEMENT FLOAT RECTANGLE
-		public Rectangle boundingBox;
+		public RectangleFloat boundingBox;
 		protected Texture2D texture;
 		public Vector2 speed;
 		public Vector2 acceleration;
 
 		#region Constructors
-		public Entity(Rectangle box, Texture2D tex, Vector2 s)
+		public Entity(RectangleFloat box, Texture2D tex, Vector2 s)
 		{
 			this.boundingBox = box;
 			this.texture = tex;
@@ -22,7 +23,7 @@ namespace BreakoutWindows.Entities
 			this.acceleration = new Vector2(0, 0);
 		}
 
-		public Entity(Rectangle box, Texture2D tex){
+		public Entity(RectangleFloat box, Texture2D tex){
 			this.boundingBox = box;
 			this.texture = tex;
 			this.speed = new Vector2(0, 0);
@@ -31,22 +32,22 @@ namespace BreakoutWindows.Entities
 		#endregion
 
 		#region Getters and setters
-		public int X
+		public float X
 		{
 			get { return boundingBox.X; }
 			set { boundingBox.X = value; }
 		}
-		public int Y
+		public float Y
 		{
 			get { return boundingBox.Y; }
 			set { boundingBox.Y = value; }
 		}
-		public int Width
+		public float Width
 		{
 			get { return boundingBox.Width; }
 			set { boundingBox.Width = value; }
 		}
-		public int Height
+		public float Height
 		{
 			get { return boundingBox.Height; }
 			set { boundingBox.Height = value; }
@@ -62,15 +63,13 @@ namespace BreakoutWindows.Entities
 			speed.X += acceleration.X * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000;
 			speed.Y += acceleration.Y * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000;
 
-			boundingBox.
-
-			boundingBox.X += (int)(speed.X * gameTime.ElapsedGameTime.TotalMilliseconds / 1000);
-			boundingBox.Y += (int)(speed.Y * gameTime.ElapsedGameTime.TotalMilliseconds / 1000);
+			boundingBox.X += (speed.X * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000);
+			boundingBox.Y += (speed.Y * (float)gameTime.ElapsedGameTime.TotalMilliseconds / 1000);
 		}
 
 		public virtual void draw(GameTime gameTime, SpriteBatch spriteBatch)
 		{
-			spriteBatch.Draw(texture, boundingBox, Color.White);
+			spriteBatch.Draw(texture, boundingBox.Rectangle, Color.White);
 		}
 
 		public bool collidesWith(Entity other)

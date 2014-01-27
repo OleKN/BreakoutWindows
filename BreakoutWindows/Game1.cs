@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 using BreakoutWindows.Entities;
+using BreakoutWindows.HelperClasses;
 #endregion
 
 namespace BreakoutWindows
@@ -28,6 +29,7 @@ namespace BreakoutWindows
 		public static Texture2D textureBall;
 		public static Texture2D textureBrick;
 		public static Texture2D texturePowerup;
+		public static Texture2D textureFireParticle;
 		public static Viewport viewport;
 		public static GraphicsDevice graphicsDevice;
 	}
@@ -72,18 +74,19 @@ namespace BreakoutWindows
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			GameObjects.textureBall = Content.Load<Texture2D>("ball");
 			GameObjects.textureBrick = Content.Load<Texture2D>("paddle");
+			GameObjects.textureFireParticle = Content.Load<Texture2D>("fireParticle2");
 			
 			//GameObjects.texturePowerup = Content.Load <Texture2D>("powerup");
 
 			GameObjects.viewport = this.GraphicsDevice.Viewport;
 
-			GameObjects.paddle = new Paddle(new Rectangle(this.GraphicsDevice.Viewport.Width / 2 - 40, 
+			GameObjects.paddle = new Paddle(new RectangleFloat(this.GraphicsDevice.Viewport.Width / 2 - 40, 
 												this.GraphicsDevice.Viewport.Height - 10, 
 												80, 
 												10), 
 											Content.Load<Texture2D>("paddle"));
 
-			GameObjects.balls.Add(new Ball(new Rectangle(GameObjects.paddle.boundingBox.X + GameObjects.paddle.boundingBox.Width / 2 - 5,
+			GameObjects.balls.Add(new Ball(new RectangleFloat(GameObjects.paddle.boundingBox.X + GameObjects.paddle.boundingBox.Width / 2 - 5,
 												GameObjects.paddle.boundingBox.Top - 10,
 												20,
 												20),
@@ -94,7 +97,7 @@ namespace BreakoutWindows
 			{
 				for (int y = 0; y < 9; y++)
 				{
-					GameObjects.bricks.Add(new Brick(new Rectangle(this.GraphicsDevice.Viewport.Width * x / 9,
+					GameObjects.bricks.Add(new Brick(new RectangleFloat(this.GraphicsDevice.Viewport.Width * x / 9,
 														20 * y,
 														this.GraphicsDevice.Viewport.Width / 9,
 														20),
@@ -124,62 +127,12 @@ namespace BreakoutWindows
 				Exit();
 
 
-			
-
-			#region Update and handle Balls
 			int ballNumber = GameObjects.balls.Count;
 			for (int i = 0; i < ballNumber; i++)
 			{
 				Ball ball = GameObjects.balls[i];
 				ball.update(gameTime);
 			}
-				// Collides with bricks
-				/*for (int j = 0; j < bricks.Count; j++)
-				{
-					Brick brick = bricks[j];
-					if (ball.collidesWith(brick))
-					{
-						
-						if (ball.boundingBox.Left < brick.boundingBox.Left && ball.speed.X > 0 || 
-							ball.boundingBox.Right > brick.boundingBox.Right && ball.speed.X < 0)
-						{
-							ball.speed.X = -ball.speed.X;
-						}
-						if (ball.boundingBox.Top < brick.boundingBox.Top && ball.speed.Y > 0 || 
-							ball.boundingBox.Bottom > brick.boundingBox.Bottom && ball.speed.Y < 0)
-						{
-							ball.speed.Y = -ball.speed.Y;
-						}
-						bricks.RemoveAt(j);
-						brick = null;
-						j--;
-					}
-				}
-
-				// Collides with other balls
-				for (int j = i+1; j < ballNumber; j++)
-				{
-					Ball ball2 = balls[j];
-					if (ball.collidesWith(ball2) && ball.Y != ball2.Y)
-					{
-
-						Vector2 collision = new Vector2(ball.X - ball2.X, ball.Y - ball2.Y);
-						float distance = collision.Length();
-						if (distance == 0)
-						{
-							collision = new Vector2(1, 0);
-							distance = 1;
-						}
-						collision = new Vector2(collision.X / distance, collision.Y / distance);
-						float aci = Vector2.Dot(ball.speed, collision);
-						float bci = Vector2.Dot(ball2.speed, collision);
-
-						ball.speed += (bci - aci) * collision;
-						ball2.speed += (aci - bci) * collision;
-					}
-				}*/
-
-			#endregion
 
 			GameObjects.paddle.update(gameTime);
 
